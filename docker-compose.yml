@@ -1,0 +1,25 @@
+# Docker Compose - OPCIONAL (No requerido para QuickOpinion)
+# Este archivo está aquí solo como referencia si alguien quiere usar Docker
+# El proyecto funciona 100% con servicios cloud sin necesidad de Docker
+
+version: '3.8'
+
+services:
+  # Redis local (OPCIONAL - puedes usar Upstash en su lugar)
+  # Descomenta si quieres Redis local en vez de cloud
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: quickopinion-redis
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: ['CMD', 'redis-cli', 'ping']
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 5
+
+# volumes:
+#   redis_data:
+
