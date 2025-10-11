@@ -1,0 +1,20 @@
+{
+    "quiz_id": "00000000-0000-0000-0000-000000000001",
+    "restaurant_id": "fa6b73cd-0f74-4aff-8000-c1034c4f21ea",
+    "name": "Sebastian Test",
+    "email": "test@quickopinion.com",
+    "phone": "+5491155551234",
+    "consent": true,
+    "answers": [
+      { "question_id": "q1", "selected_option": "Huevo" },
+      { "question_id": "q2", "selected_option": "España" },
+      { "question_id": "q3", "selected_option": "El quinto sabor básico" },
+      { "question_id": "q4", "selected_option": "Brie" },
+      { "question_id": "q5", "selected_option": "160°C" }
+    ],
+    "meta": {
+      "ip": "127.0.0.1",
+      "user_agent": "PowerShell/Test"
+    }
+}
+  

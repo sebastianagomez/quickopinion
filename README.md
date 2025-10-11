@@ -35,26 +35,30 @@ QuickOpinion permite a los restaurantes capturar leads mediante trivias interact
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
+
 - **Framework**: Next.js 15 (React 18)
 - **Lenguaje**: TypeScript
 - **Estilos**: Tailwind CSS
 - **PWA**: Service Workers + Offline support
 
 ### Backend
+
 - **Runtime**: Node.js 22
 - **Framework**: Express
 - **Lenguaje**: TypeScript
 - **API**: REST + OpenAPI
 
 ### Infraestructura
+
 - **Base de datos**: Supabase (PostgreSQL)
-- **Cache**: Redis
-- **Jobs**: BullMQ
+- **Backend**: Supabase Edge Functions
+- **Cron Jobs**: Supabase pg_cron
 - **Email**: emBlue / SendGrid
-- **Hosting**: Vercel (Frontend) + Railway (Backend)
+- **Hosting**: Vercel (Frontend + Backend)
 - **CI/CD**: GitHub Actions
 
 ### Monorepo
+
 - **Tool**: Turborepo
 - **Package Manager**: npm workspaces
 
@@ -64,21 +68,20 @@ QuickOpinion permite a los restaurantes capturar leads mediante trivias interact
 
 ```
 ┌─────────────┐
-│  Cliente    │ QR → Trivia SPA
+│  Cliente    │ QR → Trivia SPA (Vercel)
 └──────┬──────┘
        │
        ▼
-┌─────────────────┐
-│   API Gateway   │ REST API
-└────┬────────┬───┘
-     │        │
-     ▼        ▼
-┌─────────┐ ┌──────────┐
-│Supabase │ │  Redis   │
-│  (PG)   │ │+ BullMQ  │
-└─────────┘ └──────────┘
-     │            │
-     ▼            ▼
+┌─────────────────────────────────┐
+│         Supabase                │
+│  • PostgreSQL Database          │
+│  • Edge Functions (Backend)     │
+│  • pg_cron (Scheduled Jobs)     │
+│  • Auth                         │
+│  • Storage                      │
+└────────┬────────────────────────┘
+         │
+         ▼
 ┌─────────────────────┐
 │  Email Provider     │ emBlue/SendGrid
 └─────────────────────┘
@@ -93,28 +96,31 @@ QuickOpinion permite a los restaurantes capturar leads mediante trivias interact
 - Node.js >= 22.0.0
 - npm >= 10.0.0
 - Cuenta Supabase (gratis en https://supabase.com)
-- Cuenta Upstash para Redis (gratis en https://upstash.com)
 
 ### Instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone https://github.com/tu-usuario/quickopinion-app.git
    cd quickopinion-app
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    ```
 
 3. **Configurar Supabase**
+
    ```bash
    # Sigue la guía: docs/SETUP_SUPABASE.md
    # Obtén tus credenciales de Supabase y Upstash Redis
    ```
 
 4. **Configurar variables de entorno**
+
    ```bash
    cp .env.example .env
    cp packages/database/.env.example packages/database/.env
@@ -122,6 +128,7 @@ QuickOpinion permite a los restaurantes capturar leads mediante trivias interact
    ```
 
 5. **Ejecutar migraciones**
+
    ```bash
    npm run db:migrate
    npm run db:seed
@@ -211,6 +218,7 @@ npm run clean        # Limpiar node_modules y builds
 ### Por Workspace
 
 #### API (`apps/api`)
+
 ```bash
 npm run dev --workspace=@quickopinion/api
 npm run build --workspace=@quickopinion/api
@@ -218,6 +226,7 @@ npm test --workspace=@quickopinion/api
 ```
 
 #### Frontend Apps
+
 ```bash
 npm run dev --workspace=@quickopinion/trivia
 npm run build --workspace=@quickopinion/trivia
@@ -231,24 +240,28 @@ npm run lint --workspace=@quickopinion/trivia
 ### Apps
 
 #### `apps/api` - Backend API
+
 - Express + TypeScript
 - Rutas: `/quiz`, `/validate`, `/webhooks`, `/admin`
 - Autenticación con Supabase Auth
 - Rate limiting con Redis
 
 #### `apps/trivia` - Trivia SPA
+
 - Next.js 15 (App Router)
 - Rutas dinámicas: `/:restaurant/:quiz`
 - Tailwind CSS para estilos
 - Optimizado para mobile
 
 #### `apps/validator` - PWA Validación
+
 - Next.js con PWA support
 - Escáner QR (MediaDevices API)
 - Offline-first con Service Workers
 - Sync queue para operaciones offline
 
 #### `apps/admin` - Backoffice
+
 - Dashboard con KPIs
 - CRUD de restaurantes y quizzes
 - Reportes y exportación CSV
@@ -257,21 +270,25 @@ npm run lint --workspace=@quickopinion/trivia
 ### Packages
 
 #### `packages/database`
+
 - Prisma schema para Supabase
 - Migraciones versionadas
 - Seed data para desarrollo
 
 #### `packages/shared`
+
 - Tipos TypeScript compartidos
 - Validadores Zod
 - Utilidades (generación de códigos, fechas)
 
 #### `packages/email`
+
 - Adapters para emBlue/SendGrid
 - Plantillas HTML responsive
 - Tracking de eventos
 
 #### `packages/jobs`
+
 - BullMQ processors
 - Recordatorios automáticos
 - Expiración de cupones
@@ -361,31 +378,74 @@ docker run -p 3000:3000 --env-file .env quickopinion-api
 
 ---
 
+## 📚 Documentación
+
+### Guías de Setup
+
+- [**LEEME PRIMERO**](./docs/setup/LEEME_PRIMERO.md) - Guía de inicio rápido
+- [Configurar Supabase](./docs/setup/CONFIGURAR_SUPABASE_CREDENCIALES.md)
+- [Configurar y Testear API](./docs/setup/CONFIGURAR_ENV_Y_TESTEAR.md)
+- [Setup Inicial](./docs/setup/EMPEZAR_AQUI.md)
+
+### Arquitectura
+
+- [Arquitectura Simplificada](./docs/arquitectura/ARQUITECTURA_SIMPLIFICADA.md) - Diagrama y decisiones
+- [Resumen de Cambios](./docs/arquitectura/RESUMEN_CAMBIOS.md)
+- [Archivos Creados](./docs/arquitectura/ARCHIVOS_CREADOS.md)
+
+### Fases del Proyecto
+
+- [Fase 2: Backend API](./docs/fases/FASE_2_EXITOSA.md) ✅ Completada
+- [Fase 3: Frontend Trivia](./docs/fases/FASE_3_FRONTEND_PLAN.md) 🔄 En progreso
+
+### Documentación Técnica Completa
+
+- [Contexto y Especificación](./docs/context.md) - Documento maestro del proyecto
+
+---
+
 ## 🗺️ Roadmap
 
 ### ✅ Fase 0 - Setup Inicial (Completado)
-- [x] Monorepo configurado
-- [x] Estructura de carpetas
-- [x] Tooling (ESLint, Prettier, Husky)
-- [x] Docker setup
 
-### 🔄 Fase 1 - Base de Datos (En progreso)
-- [ ] Migraciones de Supabase
-- [ ] Prisma Client configurado
-- [ ] Seed data
+- [x] Monorepo configurado con Turborepo
+- [x] Estructura de carpetas
+- [x] Tooling (ESLint, Prettier, Husky, Conventional Commits)
+- [x] VSCode settings y extensions
+
+### ✅ Fase 1 - Base de Datos (Completado)
+
+- [x] Migraciones de Supabase
+- [x] Prisma Client configurado
+- [x] 6 tablas principales (Restaurant, Lead, Quiz, QuizResponse, Coupon, EmailEvent)
+- [x] Seed data funcionando
+
+### ✅ Fase 2 - Backend API (Completado)
+
+- [x] Express + TypeScript
+- [x] GET /api/quiz/:id - Obtener preguntas
+- [x] POST /api/quiz/submit - Enviar respuestas y generar cupón
+- [x] Validaciones con Zod
+- [x] Regla anti-abuso 24h
+- [x] Generación de códigos únicos
+- [x] Email service (stub)
+- [x] Tests funcionando
+
+### 🔄 Fase 3 - Frontend Trivia (En progreso)
+
+- [ ] Pantalla de bienvenida
+- [ ] Sistema de 5 preguntas
+- [ ] Formulario de lead capture
+- [ ] Pantalla de resultado con cupón
+- [ ] Mobile responsive
+- [ ] Integración con backend
 
 ### 📅 Próximas Fases
-- [ ] Fase 2: Backend Core - API Quiz
-- [ ] Fase 3: Sistema de Emails
-- [ ] Fase 4: Frontend Trivia SPA
-- [ ] Fase 5: API Validación + PWA
-- [ ] Fase 6: Jobs y Automatizaciones
-- [ ] Fase 7: Backoffice Admin
-- [ ] Fase 8: Observabilidad y Seguridad
-- [ ] Fase 9: Testing Integral
-- [ ] Fase 10: Migración y Go-Live
 
-Ver [docs/context.md](./docs/context.md) para detalles completos.
+- [ ] Fase 4: Validator PWA
+- [ ] Fase 5: Admin Backoffice
+- [ ] Fase 6: Emails Reales (emBlue/SendGrid)
+- [ ] Fase 7: Deploy Producción
 
 ---
 
@@ -433,6 +493,7 @@ Este proyecto es privado y propietario.
 ## 📞 Soporte
 
 Para preguntas o soporte, contactar a través de:
+
 - Email: soporte@quickopinion.com
 - Documentación: [docs/context.md](./docs/context.md)
 
@@ -448,4 +509,3 @@ Para preguntas o soporte, contactar a través de:
 ---
 
 **¡Construido con ❤️ para revolucionar la fidelización en restaurantes!**
-

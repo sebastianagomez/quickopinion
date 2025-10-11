@@ -1,0 +1,119 @@
+# QuickOpinion API - Test Requests
+# Use with REST Client (VSCode Extension) or similar
+
+### Variables
+@baseUrl = http://localhost:3000
+@quizId = 00000000-0000-0000-0000-000000000001
+@restaurantId = {{$dotenv RESTAURANT_ID}}
+
+###############################################
+# Health Check
+###############################################
+
+### Health Check
+GET {{baseUrl}}/health
+
+###############################################
+# Quiz Endpoints
+###############################################
+
+### Get Quiz (devuelve preguntas sin respuestas correctas)
+GET {{baseUrl}}/api/quiz/{{quizId}}
+
+### Submit Quiz - Primera vez (debería crear cupón)
+POST {{baseUrl}}/api/quiz/submit
+Content-Type: application/json
+
+{
+  "quiz_id": "{{quizId}}",
+  "restaurant_id": "{{restaurantId}}",
+  "name": "Test User",
+  "email": "test@example.com",
+  "phone": "+5491112345678",
+  "message": "¡Me encantó la trivia!",
+  "consent": true,
+  "answers": [
+    {
+      "question_id": "q1",
+      "selected_option": "Huevo"
+    },
+    {
+      "question_id": "q2",
+      "selected_option": "España"
+    },
+    {
+      "question_id": "q3",
+      "selected_option": "El quinto sabor básico"
+    },
+    {
+      "question_id": "q4",
+      "selected_option": "Brie"
+    },
+    {
+      "question_id": "q5",
+      "selected_option": "160°C"
+    }
+  ],
+  "meta": {
+    "ip": "192.168.1.1",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  }
+}
+
+### Submit Quiz - Mismo email <24h (debería devolver 409)
+POST {{baseUrl}}/api/quiz/submit
+Content-Type: application/json
+
+{
+  "quiz_id": "{{quizId}}",
+  "restaurant_id": "{{restaurantId}}",
+  "name": "Test User",
+  "email": "test@example.com",
+  "consent": true,
+  "answers": [
+    {
+      "question_id": "q1",
+      "selected_option": "Crema"
+    }
+  ]
+}
+
+### Submit Quiz - Email inválido (debería devolver 400)
+POST {{baseUrl}}/api/quiz/submit
+Content-Type: application/json
+
+{
+  "quiz_id": "{{quizId}}",
+  "restaurant_id": "{{restaurantId}}",
+  "name": "Test User",
+  "email": "invalid-email",
+  "consent": true,
+  "answers": []
+}
+
+### Submit Quiz - Sin consentimiento (debería devolver 400)
+POST {{baseUrl}}/api/quiz/submit
+Content-Type: application/json
+
+{
+  "quiz_id": "{{quizId}}",
+  "restaurant_id": "{{restaurantId}}",
+  "name": "Test User",
+  "email": "test2@example.com",
+  "consent": false,
+  "answers": []
+}
+
+### Submit Quiz - Quiz inexistente (debería devolver 404)
+POST {{baseUrl}}/api/quiz/submit
+Content-Type: application/json
+
+{
+  "quiz_id": "00000000-0000-0000-0000-000000000999",
+  "restaurant_id": "{{restaurantId}}",
+  "name": "Test User",
+  "email": "test3@example.com",
+  "consent": true,
+  "answers": []
+}
+
