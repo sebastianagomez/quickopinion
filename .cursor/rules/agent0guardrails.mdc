@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+Proyecto: QuickOpinion 
+NO uses thinking salvo que yo lo cambie manual
+NO crees ni edites documentación (.md, .mdx, README, docs/**) salvo que yo escriba /doc.
+Sé conciso: ≤600 tokens. Si necesitas explicar, usa ≤5 bullets.
+
+Flujo:
+1) Si la tarea no está acotada, propone ≤5 pasos (sin código).
+2) Aplica SOLO el siguiente paso y devuelve PATCH MINIMAL (unified diff; no re-formatees archivos completos).
+3) Muestra (no ejecutes) comandos de validación:
+   pnpm lint && pnpm typecheck && pnpm test -w
+4) Si todo pasa, DETENTE. Si falla, corrige solo ese fallo.
+
+Alcance:
+- Trabaja solo dentro del /scope indicado.
+- No cambies APIs públicas sin justificar en 1 línea.
+
+Estilo:
+- TypeScript estricto, ESM, SSR/RSC/edge intactos, a11y AA.

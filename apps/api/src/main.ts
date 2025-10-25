@@ -10,6 +10,7 @@ import './config/database'; // Initialize database connection
 // Routes
 import healthRoutes from './routes/health.routes';
 import quizRoutes from './routes/quiz.routes';
+import landingRoutes from './routes/landing.routes';
 
 const app = express();
 const PORT = env.API_PORT || 3000;
@@ -50,6 +51,7 @@ app.use((req, _res, next) => {
 // Routes
 app.use('/health', healthRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/landing', landingRoutes);
 
 // Root
 app.get('/', (_req, res) => {

@@ -3,21 +3,26 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { WelcomeScreen } from '@/components/quiz/WelcomeScreen';
+// import { WelcomeScreen } from '@/components/quiz/WelcomeScreen';
 import { QuestionsList } from '@/components/quiz/QuestionsList';
 import { LeadForm } from '@/components/quiz/LeadForm';
 import { ResultScreen } from '@/components/quiz/ResultScreen';
 import { Toast } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
 import { api, ApiError } from '@/lib/api';
 import { getClientInfo } from '@/lib/utils';
 import type {
   Quiz,
-  QuizStep,
+  //QuizStep,
   Coupon,
   QuizResult,
   QuizAnswer,
 } from '@/types/quiz';
 import type { LeadFormData } from '@/lib/validators';
+
+// si pensás usarlo después:
+// const _welcomeScreen = WelcomeScreen; // antes: welcomeScreen
+// type _QuizStep = QuizStep; // antes: QuizStep
 
 export default function QuizPage({
   params,
@@ -25,7 +30,6 @@ export default function QuizPage({
   params: Promise<{ quizId: string }>;
 }) {
   const [quizId, setQuizId] = useState<string | null>(null);
-  const [step, setStep] = useState<QuizStep>('welcome');
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [leadData, setLeadData] = useState<LeadFormData | null>(null);
@@ -33,6 +37,8 @@ export default function QuizPage({
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   // Unwrap params (Next.js 15 change)
   useEffect(() => {
@@ -60,10 +66,6 @@ export default function QuizPage({
     loadQuiz();
   }, [quizId]);
 
-  const handleStart = () => {
-    setStep('questions');
-  };
-
   const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers((prev) => ({
       ...prev,
@@ -71,11 +73,18 @@ export default function QuizPage({
     }));
   };
 
-  const handleQuestionsSubmit = () => {
-    setStep('form');
+  const handleShowForm = () => {
+    setShowForm(true);
+    // Scroll to form
+    setTimeout(() => {
+      document.getElementById('form-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
   };
 
-  const handleLeadFormSubmit = async (data: LeadFormData) => {
+  const handleSubmit = async (data: LeadFormData) => {
     if (!quiz) return;
 
     setLoading(true);
@@ -109,14 +118,22 @@ export default function QuizPage({
 
       setCoupon(response.coupon);
       setResult(response.result);
-      setStep('result');
+      setSubmitted(true);
+
+      // Scroll to result
+      setTimeout(() => {
+        document.getElementById('result-section')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 100);
     } catch (err) {
       if (err instanceof ApiError && err.status === 409 && err.data?.coupon) {
         // Already participated - show existing coupon
         setCoupon(err.data.coupon);
         setResult({ correct: 0, total: quiz.config.questions.length });
         setError(err.message);
-        setStep('result');
+        setSubmitted(true);
       } else {
         setError(
           err instanceof ApiError
@@ -172,41 +189,86 @@ export default function QuizPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
 
       <main className="flex-1 px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {step === 'welcome' && quiz && (
-            <WelcomeScreen quiz={quiz} onStart={handleStart} />
+        <div className="max-w-3xl mx-auto space-y-8">
+          {/* Intro section */}
+          {quiz && !submitted && (
+            <div className="bg-white rounded-lg shadow-sm p-6 text-center animate-fade-in">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                {quiz.name ||
+                  'Participa de esta trivia para ganarte un lindo premio de parte de {nombre_negocio}'}
+              </h1>
+              <p className="text-gray-600 text-sm md:text-base">
+                ¡Responde las preguntas y completa tus datos para recibir tu
+                cupón!
+              </p>
+            </div>
           )}
 
-          {step === 'questions' && quiz && (
-            <QuestionsList
-              questions={quiz.config.questions}
-              answers={answers}
-              onAnswerChange={handleAnswerChange}
-              onSubmit={handleQuestionsSubmit}
-            />
+          {/* Questions */}
+          {quiz && !submitted && (
+            <>
+              <QuestionsList
+                questions={quiz.config.questions}
+                answers={answers}
+                onAnswerChange={handleAnswerChange}
+              />
+
+              {/* Submit button */}
+              {!showForm && (
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={handleShowForm}
+                    disabled={
+                      Object.keys(answers).length !==
+                      quiz.config.questions.length
+                    }
+                  >
+                    ✅ Enviar
+                  </Button>
+                  {Object.keys(answers).length !==
+                    quiz.config.questions.length && (
+                    <p className="text-sm text-gray-500 text-center mt-3">
+                      Responde todas las preguntas para continuar
+                    </p>
+                  )}
+                </div>
+              )}
+            </>
           )}
 
-          {step === 'form' && (
-            <LeadForm onSubmit={handleLeadFormSubmit} loading={loading} />
+          {/* Lead Form */}
+          {quiz && !submitted && showForm && (
+            <div id="form-section">
+              <LeadForm
+                onSubmit={handleSubmit}
+                loading={loading}
+                restaurantName={quiz.name}
+              />
+            </div>
           )}
 
-          {step === 'result' && coupon && result && leadData && (
-            <ResultScreen
-              coupon={coupon}
-              result={result}
-              userEmail={leadData.email}
-            />
+          {/* Result */}
+          {submitted && result && coupon && (
+            <div id="result-section">
+              <ResultScreen
+                coupon={coupon}
+                result={result}
+                userEmail={leadData?.email || ''}
+              />
+            </div>
           )}
         </div>
       </main>
 
       <Footer />
 
-      {error && step !== 'result' && (
+      {error && !submitted && (
         <Toast message={error} type="error" onClose={() => setError(null)} />
       )}
     </div>

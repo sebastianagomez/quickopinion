@@ -59,3 +59,34 @@ export async function sendReminderEmail(
     messageId: `stub-reminder-${Date.now()}`,
   };
 }
+
+interface SendLandingLeadNotificationInput {
+  name: string;
+  email: string;
+  phone?: string;
+  message?: string;
+}
+
+export async function sendLandingLeadNotification(
+  input: SendLandingLeadNotificationInput
+) {
+  const { name, email, phone, message } = input;
+  const recipient = 'sebastian.a.gomez@outlook.com.ar';
+
+  logger.info({
+    action: 'send_landing_lead_notification',
+    recipient,
+    leadData: { name, email, phone, message },
+  });
+
+  logger.info(`📧 [EMAIL STUB] Notificación de lead a: ${recipient}`);
+  logger.info(`   Lead: ${name} <${email}>`);
+  if (phone) logger.info(`   Teléfono: ${phone}`);
+  if (message) logger.info(`   Mensaje: ${message}`);
+
+  // TODO: Implement with nodemailer or your email provider
+  return {
+    success: true,
+    messageId: `stub-landing-${Date.now()}`,
+  };
+}

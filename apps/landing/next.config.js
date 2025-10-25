@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
-  experimental: {
-    optimizePackageImports: ['@supabase/supabase-js'],
-  },
+  transpilePackages: ['@quickopinion/shared'],
 };
 
 module.exports = nextConfig;

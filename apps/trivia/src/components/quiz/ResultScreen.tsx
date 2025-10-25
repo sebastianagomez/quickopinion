@@ -13,7 +13,11 @@ interface ResultScreenProps {
   userEmail: string;
 }
 
-export function ResultScreen({ coupon, result, userEmail }: ResultScreenProps) {
+export function ResultScreen({
+  coupon,
+  result,
+  userEmail: _userEmail,
+}: ResultScreenProps) {
   const [showToast, setShowToast] = useState(false);
   const percentage = Math.round((result.correct / result.total) * 100);
   const scoreEmoji = getScoreEmoji(result.correct, result.total);
@@ -26,20 +30,20 @@ export function ResultScreen({ coupon, result, userEmail }: ResultScreenProps) {
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center animate-bounce-in">
-      <Card className="max-w-2xl w-full">
+    <>
+      <Card className="w-full animate-bounce-in">
         <CardHeader>
-          <div className="mb-6 flex justify-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-success to-green-600 rounded-full flex items-center justify-center shadow-lg animate-bounce-in">
-              <span className="text-white text-4xl">{scoreEmoji}</span>
+          <div className="mb-4 flex justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-success to-green-600 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white text-3xl">{scoreEmoji}</span>
             </div>
           </div>
-          <CardTitle className="text-3xl sm:text-4xl text-center">
-            ¡Felicitaciones!
+          <CardTitle className="text-2xl md:text-3xl text-center">
+            ¡Gracias por participar!
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-5">
           {/* Score */}
           <div className="text-center pb-6 border-b-2 border-gray-100">
             <p className="text-gray-600 mb-3">Tu resultado:</p>
@@ -99,21 +103,13 @@ export function ResultScreen({ coupon, result, userEmail }: ResultScreenProps) {
             </div>
           </div>
 
-          {/* Email confirmation */}
-          <div className="bg-secondary-50 rounded-lg p-4 border-2 border-secondary-100">
-            <p className="text-sm text-gray-700 flex items-start gap-2">
-              <svg
-                className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-              </svg>
-              <span>
-                También te enviamos este cupón por email a{' '}
-                <span className="font-semibold">{userEmail}</span>
+          {/* Success message */}
+          <div className="bg-primary-50 rounded-lg p-4 border-2 border-primary-100">
+            <p className="text-sm text-gray-700 text-center">
+              <span className="block font-semibold text-primary mb-1">
+                ✅ Tu cupón ha sido generado exitosamente
               </span>
+              Guarda este código para tu próxima visita
             </p>
           </div>
 
@@ -146,12 +142,9 @@ export function ResultScreen({ coupon, result, userEmail }: ResultScreenProps) {
           </div>
 
           {/* Thank you message */}
-          <div className="text-center pt-4">
-            <p className="text-lg font-medium text-gray-900 mb-2">
-              ¡Gracias por participar! 🎉
-            </p>
-            <p className="text-sm text-gray-600">
-              Nos vemos pronto en el restaurante
+          <div className="text-center pt-2">
+            <p className="text-base md:text-lg text-gray-800">
+              ¡Te esperamos pronto! 🎉
             </p>
           </div>
         </CardContent>
@@ -164,6 +157,6 @@ export function ResultScreen({ coupon, result, userEmail }: ResultScreenProps) {
           onClose={() => setShowToast(false)}
         />
       )}
-    </div>
+    </>
   );
 }

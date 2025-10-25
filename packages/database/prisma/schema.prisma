@@ -133,3 +133,15 @@ model EmailEvent {
   @@map("email_events")
 }
 
+model LandingLead {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  email     String
+  phone     String?
+  message   String?
+  origin    String   @default("landing")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("landing_leads")
+}
+

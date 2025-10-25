@@ -1,0 +1,26 @@
+# Builds y dependencias
+node_modules
+.next
+dist
+build
+coverage
+
+# Herramientas / VCS
+.git
+.github
+.vscode
+
+# Archivos grandes / binarios
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.mp4
+*.log
+
+# ❗ Documentación: excluir todo excepto un "oráculo"
+docs/**
+!docs/arquitectura/RESUMEN_CAMBIOS.md
+
+# Snapshots pesados (si usas Testing Library/Jest)
+**/__snapshots__/**

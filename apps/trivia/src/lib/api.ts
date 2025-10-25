@@ -2,7 +2,7 @@ import type {
   Quiz,
   QuizSubmit,
   QuizSubmitResponse,
-  QuizErrorResponse,
+  //QuizErrorResponse,
 } from '@/types/quiz';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -11,7 +11,7 @@ class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public data?: any
+    public data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
